@@ -92,6 +92,27 @@ var cube = {
         return moves;
     }
 };
+
+let darkModeActive = false;
+
+function toggleDarkMode() {
+    console.log("Button pressed")
+    // This function toggles the darkmodeactive variable
+    // After that it sets the local storage
+    if (!darkModeActive) {
+        darkModeActive = true;
+        document.documentElement.setAttribute('data-theme', 'dark');
+        // Sets local variable so that the user's settings persist across sessions
+        localStorage.setItem('mode', 'dark');
+    }
+    else {
+        darkModeActive = false;
+        document.documentElement.setAttribute('data-theme', 'light');
+        // Sets local variable so that the user's settings persist across sessions
+        localStorage.setItem('mode', 'light');
+    }    
+}
+
 window.addEventListener("load", function () {
     function displayScramble() {
         cube.reset();
@@ -104,10 +125,42 @@ window.addEventListener("load", function () {
     }
     displayScramble();
     document.getElementById("btn-refresh").addEventListener("click", displayScramble);
+
+    // Determine if dark mode should be on according to previously existing config
+    let savedTheme = localStorage.getItem('mode') ? localStorage.getItem('mode') : undefined;
+    console.log(savedTheme)
+    if (savedTheme != undefined){
+        if (savedTheme == 'dark'){
+            darkModeActive = true;
+            document.documentElement.setAttribute('data-theme', 'dark')
+        }
+        else{
+            document.documentElement.setAttribute('data-theme', 'light')
+        }
+    }
+    // Attach event listener to dark mode toggle button
+    document.getElementById("btn-darkmode").addEventListener("click", toggleDarkMode);
 });
 </script>
 <style>
+:root{
+    --bg-color: #fff;
+    --button-bg-color: #428bca;
+    --button-border-color: #357ebd;
+    --button-font-color: #fff;
+    --font-color: #000;
+}
+[data-theme='dark']{
+    --bg-color: #0d0f18;
+    --button-bg-color: #b5bff0;
+    --button-border-color: #1e1e32;
+    --button-font-color: #1e1e32;
+    --font-color: #b5bff0;
+}
+
 html, body {
+    background-color: var(--bg-color);
+    color: var(--font-color);
     margin: 0;
     padding: 0;
     text-align: center;
@@ -124,10 +177,10 @@ html, body {
     margin-bottom: 30px;
 }
 #btn-refresh {
-    background-color: #428bca;
-    border: 1px solid #357ebd;
+    background-color: var(--button-bg-color);
+    border: 1px solid var(--button-border-color);
     border-radius: 5px;
-    color: #fff;
+    color: var(--button-font-color);
     cursor: pointer;
     display: inline-block;
     font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
@@ -138,12 +191,30 @@ html, body {
     padding: 20px 0;
     width: 258px;
 }
+#btn-darkmode {
+    top: 10px;
+    right: 10px;
+    background-color: var(--button-bg-color);
+    border: 1px solid var(--button-border-color);
+    border-radius: 5px;
+    color: var(--button-font-color);
+    cursor: pointer;
+    position: absolute;
+    display: inline-block;
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+    font-size: 16px;
+    line-height: 16px;
+    margin: 0;
+    outline: none;
+    width: 196px;
+}
 </style>
 </head>
 <body>
 <div id="main">
 <div id="scramble"></div>
 <button id="btn-refresh">SCRAMBLE</button>
+<button id="btn-darkmode">Dark Mode</button>
 </div>
 </body>
 </html>
